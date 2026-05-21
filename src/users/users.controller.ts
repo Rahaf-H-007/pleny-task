@@ -1,8 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 
-@Controller()
+@Controller('/api/users/recommendations')
 export class UsersController {
-  @Get('/api/users')
+  //dummy data
+  @Get()
   getAllUsers() {
     return [
       { id: 1, name: 'ahmed' },
