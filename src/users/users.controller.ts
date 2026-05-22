@@ -1,14 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Controller('/api/users/recommendations')
 export class UsersController {
-  //dummy data
-  @Get()
-  getAllUsers() {
-    return [
-      { id: 1, name: 'ahmed' },
-      { id: 2, name: 'mohamed' },
-      { id: 3, name: 'ali' },
-    ];
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get(':userId')
+  getUsersRestaurants(@Param('userId') userId: string) {
+    return this.usersService.getFollows(userId);
   }
 }
