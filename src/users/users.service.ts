@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Model, Types } from 'mongoose';
@@ -12,12 +16,17 @@ export class UsersService {
 
   async getFollows(userId: string) {
     // find user
-    const user = await this.userModel.findById(userId);
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new BadRequestException('Invalid id');
+    }
+
+    const userObjectId = new Types.ObjectId(userId);
+    const user = await this.userModel.findById(userObjectId);
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const userObjectId = new Types.ObjectId(userId);
     const favoriteCuisines = user.favCuisines;
 
     const result = await this.userModel.aggregate([
