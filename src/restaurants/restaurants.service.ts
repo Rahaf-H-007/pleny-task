@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateRestaurantDto } from './dtos/create-restaurant.dto';
 import { isValidObjectId, Model } from 'mongoose';
 import { Restaurant } from './restaurant.schema';
@@ -34,7 +38,13 @@ export class RestaurantsService {
   }
 
   async getRestaurant(restaurantIdentifier: string) {
-    const restaurant = isValidObjectId(restaurantIdentifier)
+    //check if identifier is valid id /valid slug
+    const isObjectId = isValidObjectId(restaurantIdentifier);
+    if (!isObjectId && !this.isValidSlug(restaurantIdentifier)) {
+      throw new BadRequestException('invalid restaurant identifier');
+    }
+
+    const restaurant = isObjectId
       ? await this.restaurantModel.findById(restaurantIdentifier)
       : await this.restaurantModel.findOne({ slug: restaurantIdentifier });
 
@@ -104,5 +114,9 @@ export class RestaurantsService {
 
     //append number to make it unique
     return `${baseSlug}-${count + 1}`;
+  }
+
+  private isValidSlug(slug: string) {
+    return /^([a-z0-9]+-)+[1-9]\d*$/.test(slug);
   }
 }
