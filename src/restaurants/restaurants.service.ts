@@ -20,7 +20,7 @@ export class RestaurantsService {
     const filter = cuisines?.length ? { cuisines: { $in: cuisines } } : {};
     const restaurants = await this.restaurantModel.find(filter);
 
-    if (!restaurants || restaurants.length === 0) {
+    if (!restaurants) {
       throw new NotFoundException('No restaurants found');
     }
 
