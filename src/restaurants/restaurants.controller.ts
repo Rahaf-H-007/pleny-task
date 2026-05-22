@@ -4,20 +4,15 @@ import {
   Get,
   Param,
   ParseFloatPipe,
-  ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
 import { CreateRestaurantDto } from './dtos/create-restaurant.dto';
 import { RestaurantsService } from './restaurants.service';
-import { ConfigService } from '@nestjs/config';
 
 @Controller('/api/restaurants')
 export class RestaurantsController {
-  constructor(
-    private readonly restaurantsService: RestaurantsService,
-    private readonly config: ConfigService,
-  ) {}
+  constructor(private readonly restaurantsService: RestaurantsService) {}
 
   @Post()
   createRestaurant(@Body() body: CreateRestaurantDto) {
@@ -34,8 +29,17 @@ export class RestaurantsController {
   }
 
   @Get()
-  getAllRestaurants(@Query('cuisines') cuisines: string[]) {
-    return this.restaurantsService.getAllRestaurants(cuisines);
+  getAllRestaurants(@Query('cuisines') cuisines?: string | string[]) {
+    let processedCuisines: string[] | undefined;
+
+    if (!cuisines) {
+      processedCuisines = undefined;
+    } else if (Array.isArray(cuisines)) {
+      processedCuisines = cuisines;
+    } else {
+      processedCuisines = [cuisines];
+    }
+    return this.restaurantsService.getAllRestaurants(processedCuisines);
   }
 
   //get by id or slug

@@ -13,9 +13,12 @@ export class RestaurantsService {
 
   async getAllRestaurants(cuisines?: string[]) {
     // get restaurants based on filter
-    const restaurants = cuisines
-      ? await this.restaurantModel.find({ cuisines: { $in: cuisines } })
-      : await this.restaurantModel.find();
+    const filter = cuisines?.length ? { cuisines: { $in: cuisines } } : {};
+    const restaurants = await this.restaurantModel.find(filter);
+
+    if (!restaurants || restaurants.length === 0) {
+      throw new NotFoundException('No restaurants found');
+    }
 
     // reverse the coordinates for each restaurant
     return restaurants.map((restaurant) => {
@@ -62,6 +65,7 @@ export class RestaurantsService {
     const restaurant = await this.restaurantModel.create({
       ...otherRestaurantDetails,
       slug,
+      cuisines: otherRestaurantDetails.cuisines.map((c) => c.toLowerCase()),
       location: {
         type: 'Point',
         coordinates: geoJsonCoordinates,
