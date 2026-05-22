@@ -13,13 +13,7 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    //got warning so i commented "baseUrl" and used "paths"
-    //if any problem happens because of that feel free to undo it
-    // "baseUrl": "./",
-    "paths": {
-      "@app/*": ["./src/app/*"],
-      "@lib/*": ["./src/lib/*"]
-    },
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
